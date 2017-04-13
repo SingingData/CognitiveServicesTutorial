@@ -1,4 +1,5 @@
 ﻿using ImageProcessingLibrary;
+using ImageStorageLibrary;
 using Newtonsoft.Json;
 using ServiceHelpers;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -45,10 +47,18 @@ namespace TestApp
             VisionServiceHelper.Throttled = () => Util.ShowToastNotification("The Vision API is throttling your requests. Consider upgrading to a Premium Key.");
             ErrorTrackingHelper.TrackException = (exception, message) => { Debug.WriteLine("ImageProcessingLibrary exception: {0}", message); };
 
-            // Enter API Keys here
-            FaceServiceHelper.ApiKey = "";
-            EmotionServiceHelper.ApiKey = "";
-            VisionServiceHelper.ApiKey = "";
+            //TODO: @Carlos - any particular error handling you want to surface this as an error for missing settings file or keys/values?
+            using (var settingsReader = new StreamReader(this.GetType().GetTypeInfo().Assembly.GetManifestResourceStream("TestApp.settings.json")))
+            using (var textReader = new JsonTextReader(settingsReader))
+            {
+                dynamic settings = new JsonSerializer().Deserialize(textReader);
+
+                FaceServiceHelper.ApiKey = settings.CognitiveServicesKeys.Face;
+                EmotionServiceHelper.ApiKey = settings.CognitiveServicesKeys.Emotion;
+                VisionServiceHelper.ApiKey = settings.CognitiveServicesKeys.Vision;
+
+                BlobStorageHelper.ConnectionString = settings.AzureStorage.ConnectionString;
+            }
 
             base.OnNavigatedTo(e);
         }

@@ -110,6 +110,7 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <EmbeddedResource Include="settings.json" />
     <None Include="TestApp_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -133,6 +134,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ImageStorageLibrary\ImageStorageLibrary.csproj">
+      <Project>{c08fd08f-7fbe-4ee8-932b-b6b7d857d807}</Project>
+      <Name>ImageStorageLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ProcessingLibrary\ImageProcessingLibrary.csproj">
       <Project>{c0ee790e-e0f8-4942-a269-749e1edd1809}</Project>
       <Name>ImageProcessingLibrary</Name>
